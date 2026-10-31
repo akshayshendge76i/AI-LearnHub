@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Learn Hub - Introduction to AI & Apply AI Study Toolkit</title>
+<style>
+  :root { --bg:#f4f6fb; --card:#fff; --ink:#1b2430; --accent:#0b5cad; --muted:#5b6675; --line:#d8dee9; --ok:#1e7e34; --bad:#b3261e; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Arial, Helvetica, sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:var(--accent); color:#fff; padding:18px 24px; }
+  header h1 { margin:0; font-size:22px; }
+  header p { margin:4px 0 0; font-size:13px; opacity:.9; }
+  nav { display:flex; gap:6px; padding:12px 24px 0; flex-wrap:wrap; }
+  nav button { border:1px solid var(--line); background:#e8edf5; padding:9px 16px; border-radius:6px 6px 0 0; cursor:pointer; font-size:14px; }
+  nav button.active { background:var(--card); border-bottom-color:var(--card); font-weight:bold; color:var(--accent); }
+  main { margin:0 24px 24px; background:var(--card); border:1px solid var(--line); padding:20px; border-radius:0 6px 6px 6px; }
+  section { display:none; } section.active { display:block; }
+  label { display:block; font-size:13px; margin:10px 0 4px; color:var(--muted); }
+  input, select, textarea { width:100%; padding:9px; border:1px solid var(--line); border-radius:5px; font-size:14px; }
+  button.primary { background:var(--accent); color:#fff; border:0; padding:10px 18px; border-radius:5px; cursor:pointer; font-size:14px; margin-right:6px; }
+  button.danger { background:var(--bad); color:#fff; border:0; padding:5px 10px; border-radius:4px; cursor:pointer; }
+  table { width:100%; border-collapse:collapse; margin-top:14px; font-size:14px; }
+  th, td { border:1px solid var(--line); padding:8px; text-align:left; vertical-align:top; }
+  th { background:#eef2f8; }
+  .err { color:var(--bad); margin-top:10px; font-size:14px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .chk { display:flex; gap:8px; align-items:center; margin:6px 0; font-size:14px; }
+  .chk input { width:auto; }
+  .result { border-left:4px solid var(--accent); background:#f1f6fd; padding:10px 14px; margin:10px 0; border-radius:4px; font-size:14px; }
+  .tag { display:inline-block; font-size:12px; background:#dfe9f7; padding:2px 8px; border-radius:10px; margin-right:6px; }
+  .card { border:1px solid var(--line); border-radius:6px; padding:12px 14px; background:#fafbfe; }
+  .card h3 { margin:0 0 6px; font-size:15px; color:var(--accent); }
+  .card p { margin:0; font-size:14px; }
+  .opt { display:block; width:100%; text-align:left; margin:6px 0; padding:10px; border:1px solid var(--line); background:#fff; border-radius:5px; cursor:pointer; font-size:14px; }
+  .opt.right { background:#e4f4e8; border-color:var(--ok); }
+  .opt.wrong { background:#fde8e6; border-color:var(--bad); }
+  .bar { height:12px; background:#e3e8f0; border-radius:6px; overflow:hidden; margin:8px 0; }
+  .bar > div { height:100%; background:var(--accent); width:0; transition:width .3s; }
+  @media (max-width:700px){ .grid2 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>AI Learn Hub - Study Toolkit for Cisco Networking Academy AI Courses</h1>
+  <p>Concept Explorer | Quiz Practice | AI Use-Case Advisor | Study Tracker &nbsp;(Introduction to AI, Apply AI and related topics)</p>
+</header>
+
+<nav id="tabs">
+  <button class="active" data-tab="concepts">Concept Explorer</button>
+  <button data-tab="quiz">Quiz Practice</button>
+  <button data-tab="advisor">AI Use-Case Advisor</button>
+  <button data-tab="tracker">Study Tracker</button>
+</nav>
+
+<main>
+  <!-- TAB 1: CONCEPTS -->
+  <section id="concepts" class="active">
+    <label for="search">Search concepts</label>
+    <input id="search" placeholder="e.g. machine learning, bias, prompt">
+    <label for="topicFilter">Filter by topic</label>
+    <select id="topicFilter"></select>
+    <div id="conceptOut" class="grid2" style="margin-top:14px"></div>
+  </section>
+
+  <!-- TAB 2: QUIZ -->
+  <section id="quiz">
+    <div class="bar"><div id="qBar"></div></div>
+    <div id="qBox"></div>
+    <p><button class="primary" id="qNext" style="display:none">Next question</button>
+       <button class="primary" id="qRestart">Restart quiz</button></p>
+    <div id="qScore" class="result"></div>
+  </section>
+
+  <!-- TAB 3: ADVISOR -->
+  <section id="advisor">
+    <p>Describe your task. The advisor matches it against a rule base and suggests an AI approach, example tools, and risks to consider.</p>
+    <div id="needs" class="grid2"></div>
+    <p><button class="primary" id="advBtn">Suggest approach</button></p>
+    <div id="advOut"></div>
+  </section>
+
+  <!-- TAB 4: TRACKER -->
+  <section id="tracker">
+    <div class="grid2">
+      <div><label for="tTopic">Topic / module</label><input id="tTopic" placeholder="e.g. Module 2 - Machine Learning basics"></div>
+      <div><label for="tCourse">Course</label>
+        <select id="tCourse"><option>Introduction to AI</option><option>Apply AI</option><option>AI Fundamentals</option><option>Other</option></select></div>
+      <div><label for="tHours">Hours studied</label><input id="tHours" type="number" min="0" step="0.5" value="1"></div>
+      <div><label for="tStat">Status</label>
+        <select id="tStat"><option>Not started</option><option>In progress</option><option>Completed</option></select></div>
+    </div>
+    <label for="tNotes">Notes</label><textarea id="tNotes" rows="3"></textarea>
+    <p><button class="primary" id="addTopic">Add entry</button>
+       <button class="primary" id="exportTopics">Export JSON</button></p>
+    <label for="tFilter">Filter by status</label>
+    <select id="tFilter"><option value="">All</option><option>Not started</option><option>In progress</option><option>Completed</option></select>
+    <div id="tErr" class="err"></div>
+    <div id="tSummary" class="result"></div>
+    <table id="tTable"></table>
+  </section>
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, ch => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[ch]));
+}
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll("#tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#tabs button").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll("main section").forEach(s => s.classList.remove("active"));
+    btn.classList.add("active");
+    $(btn.dataset.tab).classList.add("active");
+  });
+});
+
+/* ---------- Concept Explorer ---------- */
+const CONCEPTS = [
+  { t:"AI Basics", n:"Artificial Intelligence", d:"Machines performing tasks that normally need human intelligence, such as perceiving, reasoning, learning and decision making." },
+  { t:"AI Basics", n:"Narrow vs General AI", d:"Narrow AI performs one specific task well (spam filter). General AI, which would match human ability across tasks, does not yet exist." },
+  { t:"AI Basics", n:"Turing Test", d:"A proposed test of machine intelligence: can a human judge tell a machine from a person using conversation alone?" },
+  { t:"Machine Learning", n:"Machine Learning", d:"A subset of AI where systems learn patterns from data instead of following only hand-written rules." },
+  { t:"Machine Learning", n:"Supervised Learning", d:"Training on labelled examples (input and correct answer) to predict outcomes, e.g. classifying emails as spam or not." },
+  { t:"Machine Learning", n:"Unsupervised Learning", d:"Finding hidden structure in unlabelled data, such as grouping customers into clusters." },
+  { t:"Machine Learning", n:"Reinforcement Learning", d:"An agent learns by trial and error, receiving rewards or penalties for its actions." },
+  { t:"Machine Learning", n:"Overfitting", d:"A model memorises training data and performs poorly on new data. Reduced with more data, simpler models or validation." },
+  { t:"Deep Learning", n:"Neural Network", d:"Layers of connected nodes loosely inspired by the brain, which learn weights from data." },
+  { t:"Deep Learning", n:"Deep Learning", d:"Machine learning using neural networks with many layers; powers image recognition and language models." },
+  { t:"Deep Learning", n:"Computer Vision", d:"AI that interprets images and video: object detection, face recognition, defect inspection." },
+  { t:"Deep Learning", n:"Natural Language Processing", d:"AI that understands and generates human language: translation, chatbots, sentiment analysis." },
+  { t:"Generative AI", n:"Generative AI", d:"Models that create new content such as text, images, audio or code from patterns learned in training data." },
+  { t:"Generative AI", n:"Large Language Model (LLM)", d:"A model trained on massive text data to predict and generate language; the basis of modern chat assistants." },
+  { t:"Generative AI", n:"Prompt", d:"The instruction or question given to a generative model. Clear context, role, format and constraints improve results." },
+  { t:"Generative AI", n:"Hallucination", d:"When a generative model produces confident but false or fabricated information. Always verify important outputs." },
+  { t:"Data", n:"Training Data", d:"The dataset used to teach a model. Its quality, size and diversity strongly affect model quality." },
+  { t:"Data", n:"Big Data", d:"Very large, fast-growing and varied datasets, often described by volume, velocity and variety." },
+  { t:"Data", n:"Data Preprocessing", d:"Cleaning, labelling and transforming raw data into a form suitable for training." },
+  { t:"Responsible AI", n:"Bias", d:"Systematic unfairness in model output, often inherited from unrepresentative or prejudiced training data." },
+  { t:"Responsible AI", n:"Privacy", d:"Protecting personal data used by AI systems; follow consent, minimisation and regulations such as GDPR." },
+  { t:"Responsible AI", n:"Explainability", d:"Being able to describe why a model produced a given result, important for trust and accountability." },
+  { t:"Responsible AI", n:"AI Ethics", d:"Principles guiding AI use: fairness, transparency, accountability, safety and human oversight." },
+  { t:"Apply AI", n:"Use-Case Identification", d:"Choose problems that are repetitive, data-rich and measurable; define success metrics before choosing a tool." },
+  { t:"Apply AI", n:"Human in the Loop", d:"Keeping a person to review or approve AI output, especially for high-impact decisions." },
+  { t:"Apply AI", n:"AI in Networking", d:"Anomaly detection, predictive maintenance, automated troubleshooting and security threat detection (AIOps)." }
+];
+const topics = ["All topics", ...new Set(CONCEPTS.map(c => c.t))];
+$("topicFilter").innerHTML = topics.map(t => "<option>" + esc(t) + "</option>").join("");
+function renderConcepts() {
+  const q = $("search").value.trim().toLowerCase();
+  const tp = $("topicFilter").value;
+  const list = CONCEPTS.filter(c => (tp === "All topics" || c.t === tp) &&
+    (!q || c.n.toLowerCase().includes(q) || c.d.toLowerCase().includes(q)));
+  $("conceptOut").innerHTML = list.length ? list.map(c =>
+    '<div class="card"><span class="tag">' + esc(c.t) + "</span><h3>" + esc(c.n) + "</h3><p>" + esc(c.d) + "</p></div>").join("")
+    : "<p>No concepts found.</p>";
+}
+$("search").addEventListener("input", renderConcepts);
+$("topicFilter").addEventListener("change", renderConcepts);
+
+/* ---------- Quiz ---------- */
+const QUIZ = [
+  { q:"Which type of learning uses labelled training data?", o:["Supervised learning","Unsupervised learning","Reinforcement learning","Transfer learning"], a:0 },
+  { q:"A spam filter that only detects spam is an example of:", o:["General AI","Narrow AI","Super AI","Sentient AI"], a:1 },
+  { q:"What is it called when a model performs well on training data but poorly on new data?", o:["Underfitting","Normalisation","Overfitting","Clustering"], a:2 },
+  { q:"Grouping customers by behaviour without predefined labels is:", o:["Classification","Clustering (unsupervised)","Regression","Reinforcement"], a:1 },
+  { q:"A generative model producing confident but false facts is called:", o:["Bias","Hallucination","Overfitting","Latency"], a:1 },
+  { q:"Which is the best way to reduce bias in an AI system?", o:["Use less data","Use diverse, representative training data","Hide the model","Remove all testing"], a:1 },
+  { q:"Which technology interprets images and video?", o:["NLP","Computer vision","Speech synthesis","Edge routing"], a:1 },
+  { q:"What does 'human in the loop' mean?", o:["AI runs with no oversight","A person reviews or approves AI output","Humans train only once","AI replaces all staff"], a:1 },
+  { q:"Which is a good prompt practice?", o:["Be vague","Give context, task and desired format","Use one word","Avoid constraints"], a:1 },
+  { q:"Neural networks with many layers are the basis of:", o:["Deep learning","Spreadsheets","Rule-based systems only","Static routing"], a:0 },
+  { q:"Which is an example of AI in networking?", o:["Anomaly detection in traffic","Crimping cables","Labelling ports by hand","Changing a monitor"], a:0 },
+  { q:"Explainability in AI refers to:", o:["Model size","Understanding why a model made a decision","Training speed","Colour of the interface"], a:1 }
+];
+let qi = 0, qScore = 0, answered = false;
+function showQ() {
+  const q = QUIZ[qi];
+  answered = false;
+  $("qNext").style.display = "none";
+  $("qBar").style.width = (qi / QUIZ.length * 100) + "%";
+  $("qBox").innerHTML = "<h3>Question " + (qi + 1) + " of " + QUIZ.length + "</h3><p>" + esc(q.q) + "</p>" +
+    q.o.map((t, i) => '<button class="opt" data-i="' + i + '">' + esc(t) + "</button>").join("");
+  $("qScore").textContent = "Score: " + qScore + " / " + qi;
+}
+$("qBox").addEventListener("click", e => {
+  if (answered || !e.target.dataset || e.target.dataset.i === undefined) return;
+  answered = true;
+  const pick = Number(e.target.dataset.i), q = QUIZ[qi];
+  const btns = $("qBox").querySelectorAll(".opt");
+  btns[q.a].classList.add("right");
+  if (pick === q.a) qScore++; else e.target.classList.add("wrong");
+  $("qScore").textContent = "Score: " + qScore + " / " + (qi + 1);
+  $("qNext").style.display = "inline-block";
+  $("qNext").textContent = qi === QUIZ.length - 1 ? "Finish" : "Next question";
+});
+$("qNext").addEventListener("click", () => {
+  qi++;
+  if (qi >= QUIZ.length) {
+    $("qBar").style.width = "100%";
+    const pct = Math.round(qScore / QUIZ.length * 100);
+    $("qBox").innerHTML = "<h3>Quiz complete</h3><p>You scored " + qScore + " out of " + QUIZ.length + " (" + pct + "%). " +
+      (pct >= 80 ? "Excellent work." : pct >= 50 ? "Good effort - review the Concept Explorer and try again." : "Revisit the concepts and retry.") + "</p>";
+    $("qNext").style.display = "none";
+    $("qScore").textContent = "Final score: " + pct + "%";
+  } else showQ();
+});
+$("qRestart").addEventListener("click", () => { qi = 0; qScore = 0; showQ(); });
+
+/* ---------- AI Use-Case Advisor ---------- */
+const NEEDS = {
+  text: "Summarise, draft or translate text",
+  images: "Analyse images or video",
+  predict: "Predict a number or outcome from past data",
+  group: "Find groups or patterns in unlabelled data",
+  chat: "Answer customer questions automatically",
+  anomaly: "Detect unusual activity or faults",
+  repeat: "Automate a repetitive rule-based task",
+  decide: "Make high-impact decisions (loans, hiring, medical)"
+};
+const ADV = {
+  text: { m:"Generative AI / LLM", ex:"Chat assistants, summarisation and translation tools", risk:"Hallucination - verify facts and do not paste confidential data." },
+  images: { m:"Computer vision (deep learning)", ex:"Object detection, quality inspection, OCR", risk:"Needs labelled images; check bias across lighting and demographics." },
+  predict: { m:"Supervised learning (regression / classification)", ex:"Demand forecasting, churn prediction, predictive maintenance", risk:"Overfitting - validate with unseen data." },
+  group: { m:"Unsupervised learning (clustering)", ex:"Customer segmentation, traffic pattern grouping", risk:"Clusters need human interpretation to be meaningful." },
+  chat: { m:"NLP chatbot (LLM with approved knowledge base)", ex:"Help-desk bots, FAQ assistants", risk:"Provide human escalation and limit answers to trusted sources." },
+  anomaly: { m:"Anomaly detection (ML on logs and telemetry)", ex:"Network intrusion detection, AIOps monitoring", risk:"False positives - tune thresholds and keep analysts involved." },
+  repeat: { m:"Robotic process automation or simple rules", ex:"Scripts, workflow automation", risk:"Not every problem needs AI; a simple rule may be cheaper and clearer." },
+  decide: { m:"AI as decision support, not the sole decision maker", ex:"Risk scoring with human review", risk:"High bias and fairness risk - require explainability, audit trails and human in the loop." }
+};
+$("needs").innerHTML = Object.keys(NEEDS).map(k =>
+  '<label class="chk"><input type="checkbox" value="' + k + '"> ' + esc(NEEDS[k]) + "</label>").join("");
+$("advBtn").addEventListener("click", () => {
+  const chosen = [...document.querySelectorAll("#needs input:checked")].map(i => i.value);
+  if (!chosen.length) { $("advOut").innerHTML = '<p class="err">Select at least one need.</p>'; return; }
+  let html = chosen.map(k => '<div class="result"><span class="tag">' + esc(NEEDS[k]) + "</span><br><b>Suggested approach:</b> " + esc(ADV[k].m) +
+    "<br><b>Example tools:</b> " + esc(ADV[k].ex) + "<br><b>Watch out for:</b> " + esc(ADV[k].risk) + "</div>").join("");
+  if (chosen.includes("decide")) html += '<div class="result"><b>Reminder:</b> Responsible AI principles - fairness, transparency, privacy and accountability - apply to every use case above.</div>';
+  $("advOut").innerHTML = html;
+});
+
+/* ---------- Study Tracker (localStorage) ---------- */
+const KEY = "ailearnhub_entries";
+function loadT() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+function saveT(l) { try { localStorage.setItem(KEY, JSON.stringify(l)); } catch (e) { $("tErr").textContent = "Storage unavailable."; } }
+function renderT() {
+  const all = loadT(), f = $("tFilter").value;
+  const list = all.filter(c => !f || c.status === f);
+  const hours = all.reduce((s, c) => s + Number(c.hours || 0), 0);
+  const done = all.filter(c => c.status === "Completed").length;
+  $("tSummary").textContent = "Entries: " + all.length + " | Completed: " + done + " | Total hours: " + hours;
+  const head = "<tr><th>Topic</th><th>Course</th><th>Hours</th><th>Status</th><th>Notes</th><th></th></tr>";
+  $("tTable").innerHTML = head + (list.length ? list.map(c =>
+    "<tr><td>" + esc(c.topic) + "</td><td>" + esc(c.course) + "</td><td>" + esc(c.hours) + "</td><td>" + esc(c.status) +
+    "</td><td>" + esc(c.notes) + '</td><td><button class="danger" data-id="' + c.id + '">Delete</button></td></tr>').join("")
+    : '<tr><td colspan="6">No entries recorded.</td></tr>');
+}
+$("addTopic").addEventListener("click", () => {
+  const topic = $("tTopic").value.trim(), hours = Number($("tHours").value);
+  $("tErr").textContent = "";
+  if (!topic) { $("tErr").textContent = "Topic is required."; return; }
+  if (!(hours >= 0)) { $("tErr").textContent = "Hours must be zero or more."; return; }
+  const l = loadT();
+  l.push({ id: Date.now(), topic, course: $("tCourse").value, hours, status: $("tStat").value, notes: $("tNotes").value.trim() });
+  saveT(l);
+  $("tTopic").value = ""; $("tNotes").value = "";
+  renderT();
+});
+$("tTable").addEventListener("click", e => {
+  const id = e.target.dataset && e.target.dataset.id;
+  if (!id) return;
+  saveT(loadT().filter(c => String(c.id) !== id));
+  renderT();
+});
+$("tFilter").addEventListener("change", renderT);
+$("exportTopics").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(loadT(), null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "ailearnhub_entries.json"; a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+renderConcepts();
+showQ();
+renderT();
+</script>
+</body>
+</html>
